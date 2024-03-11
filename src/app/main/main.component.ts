@@ -187,7 +187,7 @@ export class MainComponent {
             } else if (remainingSeconds > 0) {
               return 'Sekunden';
             } else {
-                return this.sanitizer.bypassSecurityTrustHtml('<img style="width: 20px" src="../../assets/icons/party-icon.png">');
+                return this.sanitizer.bypassSecurityTrustHtml('<img style="width: 20px" src="./assets/icons/party-icon.png">');
             }
           }
         }
