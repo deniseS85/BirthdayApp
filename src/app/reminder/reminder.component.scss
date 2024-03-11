@@ -1,0 +1,121 @@
+$color-pink: rgb(205, 48, 192);
+$color-bg: rgb(54,54,54);
+
+header {
+    position: fixed;
+    top: 0;
+    right: 0;
+    left: 0;
+    z-index: 3;
+    height: 90px;
+    background-color: #301934;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 
+        0 5px 10px rgba(0, 0, 0, 0.2),
+        0 20px 20px -10px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.1),
+        inset 0 -15px 10px rgba(0, 0, 0, 0.1);
+    .title {
+        color: #fff;
+        font-size: clamp(1.25rem, 0.9821rem + 1.3393vw, 3.125rem);
+        cursor: default;
+    }
+    .go-back {
+        position: absolute;
+        left: 40px;
+        width: clamp(1.25rem, 0.9821rem + 1.3393vw, 3.125rem);
+        height: clamp(1.25rem, 0.9821rem + 1.3393vw, 3.125rem);
+        cursor: pointer;
+    }
+}
+
+main {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    height: 50vh;
+    padding-top: 20vh;
+    width: 100%;
+    @media (max-height: 600px) {
+        padding-top: 110px;
+        height: 80vh;
+    }
+    .date {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-direction: column;
+        height: 70px;
+        font-size: clamp(1.25rem, 1.1607rem + 0.4464vw, 1.875rem);
+        color: white;
+        cursor: default;
+        @media (max-height: 600px) {
+          height: 50px;
+        }
+        select {
+            margin-top: 30px;
+            font-size: clamp(1.25rem, 1.1607rem + 0.4464vw, 1.875rem);
+            color: white;
+            background-color: $color-bg;
+            border: 2px solid $color-pink; 
+            padding: 4px 0;
+            border-radius: 4px;
+            text-align: center;
+            cursor: pointer;
+            &:focus {
+              outline: none;
+            }
+          }
+    }
+    .checkbox-container {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        font-size: clamp(1.25rem, 1.1607rem + 0.4464vw, 1.875rem);
+        color: white;
+        width:  clamp(18.3125rem, 17.0357rem + 6.3839vw, 27.25rem);
+        cursor: default;
+        .checkbox {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 34px;
+            input {
+                opacity: 0;
+                width: 0;
+                height: 0;
+            }
+            .slider {
+                position: absolute;
+                cursor: pointer;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background-color: #ccc;
+                transition: .4s;
+                border-radius: 34px;
+            }
+            .slider:before {
+                content: "";
+                position: absolute;
+                height: 26px;
+                width: 26px;
+                left: 1px;
+                bottom: 2px;
+                background-color: white;
+                transition: .4s;
+                border-radius: 50%;
+                border: 2px solid $color-pink;
+            }
+        }
+        .checkbox input:checked + .slider {
+            background-color: #301934;
+        }
+        .checkbox input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+    }
+}

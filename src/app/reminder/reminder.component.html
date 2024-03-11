@@ -1,0 +1,26 @@
+<header>
+    <img class="go-back" (click)="this.bDayService.goBack()" src="../../assets/icons/back-icon.png">
+    <div class="title">Erinnerung</div>
+</header>
+
+<main>
+    <div class="date">
+        <mat-label>Benachrichtigungszeit einstellen</mat-label>
+        <label for="time"></label>
+        <select [(ngModel)]="selectedTime" name="time" id="time">
+            <option class="firstselect" value="">-- --</option>
+            @for (hour of hours; track hour) {
+                <option [ngValue]="hour + ':00'">{{ hour }}:00</option>
+            }
+        </select>
+    </div>
+
+    @for(reminder of reminders; track reminder; let i = $index) {
+        <div class="checkbox-container">{{ reminder.label }}
+            <label class="checkbox">
+                <input type="checkbox" [(ngModel)]="reminders[i].isChecked">
+                <div class="slider"></div>
+            </label>
+        </div>
+    }
+</main>

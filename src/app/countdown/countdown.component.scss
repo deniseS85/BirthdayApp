@@ -1,0 +1,276 @@
+$color-pink: rgb(205, 48, 192);
+$color-bg: rgb(54,54,54);
+
+header {
+    position: fixed;
+    top: 0;
+    right: 0;
+    left: 0;
+    z-index: 3;
+    height: 90px;
+    background-color: #301934;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 
+        0 5px 10px rgba(0, 0, 0, 0.2),
+        0 20px 20px -10px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.1),
+        inset 0 -15px 10px rgba(0, 0, 0, 0.1);
+    .title {
+        color: #fff;
+        font-size: clamp(1.25rem, 0.9821rem + 1.3393vw, 3.125rem);
+        cursor: default;
+    }
+    .go-back {
+        position: absolute;
+        left: 40px;
+        width: clamp(1.25rem, 0.9821rem + 1.3393vw, 3.125rem);
+        height: clamp(1.25rem, 0.9821rem + 1.3393vw, 3.125rem);
+        cursor: pointer;
+    }
+    .edit-icon {
+      position: absolute;
+      right: 40px;
+      display: flex;
+      gap: 20px;
+      img {
+        width: clamp(1.25rem, 0.9821rem + 1.3393vw, 3.125rem);
+        height: clamp(1.25rem, 0.9821rem + 1.3393vw, 3.125rem);
+        cursor: pointer;
+        &:hover:first-child {
+          filter: brightness(0) saturate(100%) invert(66%) sepia(60%) saturate(584%) hue-rotate(183deg) brightness(99%) contrast(90%);
+        }
+        &:hover:last-child {
+          filter: brightness(0) saturate(100%) invert(72%) sepia(79%) saturate(3049%) hue-rotate(303deg) brightness(96%) contrast(93%);
+        }
+      }
+    }
+}
+
+main {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  height: 50vh;
+  padding-top: 20vh;
+  @media (max-height: 600px) {
+    padding-top: 110px;
+    height: 80vh;
+  }
+    .birthday-info {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-direction: column;
+      height: 70px;
+      font-size: clamp(1.25rem, 1.1607rem + 0.4464vw, 1.875rem);
+      color: white;
+      cursor: default;
+      @media (max-height: 600px) {
+        height: 50px;
+      }
+    }
+    .countdown {
+      width: 80%;
+      table {
+        width: 100%;
+        .countdown-units, .countdown-values {
+          font-size: clamp(1.25rem, 1.1607rem + 0.4464vw, 1.875rem);
+          color: $color-pink;
+          width: 100%;
+          display: flex;
+          justify-content: space-between;
+          cursor: default;
+        }
+        .countdown-units td {
+          width: 18%;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          font-weight: bold;
+          -webkit-text-stroke: 1px #301934;
+        }
+        .countdown-values td {
+          width: 18%;
+          height: clamp(4.0625rem, 3.75rem + 1.5625vw, 6.25rem);
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          font-weight: bold; 
+          border: 3px solid #301934; 
+          box-shadow: 6px 6px 8px black; 
+          background-color: $color-pink; 
+          color: white; 
+          margin-bottom: 20px;
+          -webkit-text-stroke: 1px #301934;
+        }
+      }
+      .today-value {
+        font-size: 50px;
+        color: $color-pink;
+        cursor: default;
+        display: flex;
+        justify-content: center;
+        font-weight: bold;
+        -webkit-text-stroke: 1px #301934;
+      }
+      
+    }
+}
+
+.confirm-delete-popup {
+    position: absolute;
+    inset: 0;
+    background-color: rgba(0, 0, 0, .32);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    .popup-content {
+      background-color: #301934;
+      padding: 20px;
+      position: relative;
+      box-shadow: 
+        0px 11px 15px -7px rgba(0, 0, 0, 0.2), 
+        0px 24px 38px 3px rgba(0, 0, 0, 0.14), 
+        0px 9px 46px 8px rgba(0, 0, 0, 0.12);
+        @media only screen and (max-width: 659px) {
+          width: clamp(18.125rem, 6.9156rem + 56.0472vw, 30rem);
+        }
+      mat-progress-bar, .mat-progress-bar-buffer {
+        position: absolute;
+        top: 0;
+        right: 0;
+        left: 0;
+      }
+      .mat-mdc-progress-bar {
+          --mdc-linear-progress-active-indicator-color: rgb(205,48,192);
+          --mdc-linear-progress-track-color: #301934;
+      }
+      h2 {
+        margin-bottom: 0;
+        font-size: clamp(1.125rem, 0.9286rem + 0.9821vw, 2.5rem);
+        color: $color-pink;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 10px 0 20px 0;
+        text-align: center;
+        cursor: default;
+        @media only screen and (max-width: 659px) {
+           padding-bottom: 0;
+        }
+      }
+      .add-birthday-content {
+        padding-top: 5px;
+        padding-bottom: 5px;
+        .name {
+            margin-bottom: 20px;
+            .input-field {
+                margin-top: 10px;
+                @media only screen and (max-width: 659px) {
+                    width: 100%;
+                }
+                input {
+                    color: white;
+                    @media only screen and (max-width: 659px) {
+                        font-size: 14px;
+                    }
+                }
+                &:first-child {
+                    margin-right: 16px;
+                }
+                ::placeholder {
+                    color: gray;
+                    @media only screen and (max-width: 659px) {
+                        font-size: 14px;
+                    }
+                }
+            }
+        }
+        .date {
+            display: flex;
+            gap: 30px;
+            align-items: center;
+            .select-fields {
+                display: flex;
+                gap: 30px;
+                align-items: center;
+                select {
+                    width: 60px;
+                    height: 30px;
+                    border-radius: 5px;
+                    background-color: #301934;
+                    color: white;
+                    text-align: center;
+                }
+            }
+            @media only screen and (max-width: 659px) {
+               flex-direction: column;
+               gap: 10px;
+            }
+        }
+    }
+    .input-full-width {
+      width: 100%;
+    }
+    mat-label {
+      color: white;
+      @media only screen and (max-width: 659px) {
+          font-size: 14px;
+       }
+    }
+      .btn-container {
+        padding: 30px 0 10px 0;
+        display: flex;
+        justify-content: center;
+        gap: 30px;
+        button {
+            background-color: $color-pink;
+            color: white;
+            padding: clamp(0.3125rem, 0.2679rem + 0.2232vw, 0.625rem) clamp(0.8125rem, 0.75rem + 0.3125vw, 1.25rem);
+            border: none;
+            border-radius: 30px;
+            border: 1px solid white;
+            transition: all 125ms ease-in-out;
+            cursor: pointer;
+            &:disabled {
+                background-color: rgba(205, 48, 192, 0.6);
+                pointer-events: none;
+            }
+            &:hover {
+                background-color: lighten($color-pink, 10%);
+                transition: all 125ms ease-in-out;
+            }
+        }
+      }
+    }
+}
+
+
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+    background-color: rgb(3, 33, 56);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: #ffffff;
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+::ng-deep .mat-mdc-dialog-container {
+    --mdc-dialog-container-color: transparent;
+}
+
+@media only screen and (max-width: 659px) {
+    mat-form-field.small {
+        --mat-form-field-container-height: 40px;
+        --mat-form-field-container-vertical-padding: 8px;
+      }
+
+}

@@ -1,0 +1,44 @@
+<header>
+    <div class="title">Geburtstag</div>
+    <img (click)="openReminder()" src="../../assets/icons/notification.png">
+</header>
+
+<main>
+    @if (isBirthday) {
+        <div class="birthdayList">
+            @for (group of groupedBirthdays; track group) {
+                <table>
+                    <tr>
+                        <th colspan="3"></th>
+                    </tr>
+                    <tr>
+                        <th class="tableHeadSticky" colspan="3">
+                            <div class="tableHeader">
+                                <div class="tableHeaderLine"></div>
+                                <span class="tableHeaderText">{{ group.month }}</span>
+                            </div>
+                        </th>
+                    </tr>
+                    @for (birthday of group.birthdays; track birthday) {
+                        <tr>
+                            <td rowspan="2">
+                                <img (click)="openCountdown(birthday)" class="countdown-icon" src="../../assets/icons/countdown-icon.png">
+                            </td>
+                            <td class="namesTable">{{ birthday.firstname }} {{ birthday.lastname }}</td>
+                            <td class="totalDays">{{ getRemainingTime(birthday) }}</td>
+                        </tr>
+                        <tr>
+                            <td class="dateTable">{{ birthday.weekday }}. {{ birthday.day }}. {{ birthday.month }}</td>
+                            <td class="unit" [innerHTML]="getRemainingTimeUnit(birthday)"></td>
+                        </tr>
+                    }
+                </table>
+            }
+        </div>
+    }
+</main>
+
+
+<div class="btn-container">
+    <button (click)="addNewBirthday()">Neuen Geburtstag hinzufügen</button>
+</div>

@@ -1,0 +1,14 @@
+{
+  "targets": {
+    "birthday-3b28e": {
+      "hosting": {
+        "birthday": [
+          "birthday-3b28e"
+        ]
+      }
+    }
+  },
+  "projects": {
+    "default": "birthday-3b28e"
+  }
+}

@@ -1,0 +1,44 @@
+<div class="dialog-container">
+
+    @if(loading) {
+        <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    }
+
+    <h2 mat-dialog-title>Neuer Geburtstag</h2>
+    <form #addBirthdayForm="ngForm">
+        <div mat-dialog-content class="add-birthday-content">
+            <div class="name">
+                <mat-form-field class="input-field small" appearance="outline" [hideRequiredMarker]="hideRequired">
+                    <mat-label>Vorname</mat-label>
+                    <input [disabled]="loading" [(ngModel)]="birthday.firstname" type="text" name="firstname" matInput placeholder="Vorname" required maxlength="15" autocomplete="off">
+                </mat-form-field>
+
+                <mat-form-field class="input-field small" appearance="outline" [hideRequiredMarker]="hideRequired">
+                    <mat-label>Nachname</mat-label>
+                    <input [disabled]="loading"[(ngModel)]="birthday.lastname" type="text" name="lastname" matInput placeholder="Lastname" pattern="[A-Za-zÄäÖöÜüß ]+" maxlength="15" autocomplete="off">
+                </mat-form-field>
+            </div>
+
+            <div class="date">
+                <mat-label>Geburtstag:</mat-label>
+                <div class="select-fields">
+                    <select [(ngModel)]="birthday.day" name="day">
+                        @for (day of days; track day) {
+                            <option [value]="day">{{ day }}</option>
+                        }
+                    </select>
+    
+                    <select [(ngModel)]="birthday.month" name="month">
+                        @for (month of months; track month) {
+                            <option [value]="month">{{ month }}</option>
+                        }
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div mat-dialog-actions class="dialog-button">
+            <button mat-dialog-close mat-button>Abbrechen</button>
+            <button [disabled]="loading || addBirthdayForm.invalid" (click)="saveBirthday()" mat-button>Speichern</button>
+        </div>
+    </form>
+</div>

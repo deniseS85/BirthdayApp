@@ -1,0 +1,99 @@
+<header>
+    <img class="go-back" (click)="this.bDayService.goBack()" src="../../assets/icons/back-icon.png">
+    <div class="title">Countdown</div>
+    <div class="edit-icon">
+        <img (click)="openEditPopup()" src="../../assets/icons/edit-icon.png">
+        <img (click)="openDeleteConfirm()" src="../../assets/icons/delete-icon.png">
+    </div>
+</header>
+
+<main>
+    <div class="birthday-info">
+        <div>{{ firstname }} {{ lastname }}</div>
+        <div>{{ day }}. {{ month }}</div>
+    </div>
+
+    <div class="countdown">
+        @if(this.diffDays != 0) {
+            <table>
+                <tr class="countdown-values">
+                    <td>{{ monthDiff }}</td>
+                    <td>{{ this.isSameDay ? this.dayDiff : this.dayDiff -1 }}</td>
+                    <td>{{ hours }}</td>
+                    <td>{{ minutes }}</td>
+                    <td>{{ seconds }}</td>
+                </tr>
+                <tr class="countdown-units">
+                    <td>{{ isMobile ? 'Mon' : (monthDiff === 1 ? 'Monat' : 'Monate') }}</td>
+                    <td>{{ isMobile ? 'Tage' : (this.dayDiff -1 === 1 ? 'Tag' : 'Tage') }}</td>
+                    <td>{{ isMobile ? 'Std' : (hours === 1 ? 'Stunde' : 'Stunden') }}</td>
+                    <td>{{ isMobile ? 'Min' : (minutes === 1 ? 'Minute' : 'Minuten') }}</td>
+                    <td>{{ isMobile ? 'Sek' : (seconds === 1 ? 'Sekunde' : 'Sekunden') }}</td>
+                </tr>
+            </table>
+        } @else {
+            <div class="today-value">Heute!</div>
+        }
+    </div>
+    
+</main>
+
+@if (isConfirmDelete) {
+    <div class="confirm-delete-popup" (click)="isConfirmDelete = false">
+        <div class="popup-content" (click)="stopPropagation($event)">
+            @if(loading) {
+                <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+            }
+            <h2>Möchtest du den Geburtstag<br> wirklich löschen?</h2>
+            <div class="btn-container">
+                <button (click)="isConfirmDelete = false">Abbrechen</button>
+                <button (click)="deleteBirthday()">Löschen</button>
+            </div>
+        </div>
+    </div>
+}
+
+@if (isEditMode) {
+    <div class="confirm-delete-popup" (click)="isEditMode = false">
+        <div class="popup-content" (click)="stopPropagation($event)">
+            @if(loading) {
+                <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+            }
+            <h2>Geburtstag bearbeiten</h2>
+            <div mat-dialog-content class="add-birthday-content">
+                <div class="name">
+                    <mat-form-field class="input-field small" appearance="outline">
+                        <mat-label>Vorname</mat-label>
+                        <input [disabled]="loading" [(ngModel)]="birthday.firstname" type="text" name="firstname" matInput placeholder="Vorname" required maxlength="15" autocomplete="off">
+                    </mat-form-field>
+    
+                    <mat-form-field class="input-field small" appearance="outline">
+                        <mat-label>Nachname</mat-label>
+                        <input [disabled]="loading"[(ngModel)]="birthday.lastname" type="text" name="lastname" matInput placeholder="Lastname" pattern="[A-Za-zÄäÖöÜüß ]+" maxlength="15" autocomplete="off">
+                    </mat-form-field>
+                </div>
+    
+                <div class="date">
+                    <mat-label>Geburtstag:</mat-label>
+                    <div class="select-fields">
+                        <select [(ngModel)]="birthday.day" name="day">
+                            @for (day of days; track day) {
+                                <option [value]="day">{{ day }}</option>
+                            }
+                        </select>
+        
+                        <select [(ngModel)]="birthday.month" name="month">
+                            @for (month of months; track month) {
+                                <option [value]="month">{{ month }}</option>
+                            }
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="btn-container">
+                <button (click)="isEditMode = false">Abbrechen</button>
+                <button (click)="editBirthday()">Speichern</button>
+            </div>
+        </div>
+    </div>
+}
