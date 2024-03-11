@@ -47,7 +47,8 @@ $color-bg: rgb(54,54,54);
 body {
     background-color: $color-bg;
     height: 100vh;
+   
 }
 
-html, body { height: 100%; }
+html, body { height: 100%;  overflow-x: hidden !important;}
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }

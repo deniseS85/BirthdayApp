@@ -1,4 +1,4 @@
-import { ApplicationConfig, importProvidersFrom } from '@angular/core';
+import { ApplicationConfig, importProvidersFrom, isDevMode } from '@angular/core';
 import { initializeApp } from "firebase/app";
 import { provideRouter } from '@angular/router';
 
@@ -6,6 +6,7 @@ import { routes } from './app.routes';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { provideFirebaseApp } from "@angular/fire/app";
 import { getFirestore, provideFirestore } from "@angular/fire/firestore";
+import { provideServiceWorker } from '@angular/service-worker';
 
 const firebaseConfig = {
   apiKey: "AIzaSyAINIttSGkndoCZOg1qE5drUZx-O7rDX24",
@@ -19,9 +20,14 @@ const firebaseConfig = {
 
 export const appConfig: ApplicationConfig = {
   providers: [
-    provideRouter(routes), provideAnimationsAsync() ,
+    provideRouter(routes), provideAnimationsAsync(),
     importProvidersFrom([
-    provideFirebaseApp(() => initializeApp(firebaseConfig)),
-    provideFirestore(() => getFirestore()),
-  ]), provideAnimationsAsync(), provideAnimationsAsync()]
+        provideFirebaseApp(() => initializeApp(firebaseConfig)),
+        provideFirestore(() => getFirestore()),
+    ]), provideAnimationsAsync(), provideAnimationsAsync(),
+    provideServiceWorker('ngsw-worker.js', {
+        enabled: !isDevMode(),
+        registrationStrategy: 'registerWhenStable:30000'
+    })
+]
 };
