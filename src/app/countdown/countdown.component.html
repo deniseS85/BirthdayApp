@@ -25,7 +25,7 @@
                 </tr>
                 <tr class="countdown-units">
                     <td>{{ isMobile ? 'Mon' : (monthDiff === 1 ? 'Monat' : 'Monate') }}</td>
-                    <td>{{ isMobile ? 'Tage' : (this.dayDiff -1 === 1 ? 'Tag' : 'Tage') }}</td>
+                    <td>{{ isMobile ? (this.dayDiff - 1 === 1 ? 'Tag' : 'Tage') : (this.dayDiff - 1 === 1 ? 'Tag' : 'Tage') }}</td>
                     <td>{{ isMobile ? 'Std' : (hours === 1 ? 'Stunde' : 'Stunden') }}</td>
                     <td>{{ isMobile ? 'Min' : (minutes === 1 ? 'Minute' : 'Minuten') }}</td>
                     <td>{{ isMobile ? 'Sek' : (seconds === 1 ? 'Sekunde' : 'Sekunden') }}</td>

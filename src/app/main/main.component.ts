@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatDialog } from '@angular/material/dialog';
 import { AddBirthdayComponent } from '../add-birthday/add-birthday.component';
@@ -16,7 +16,7 @@ import { BirthdayService } from '../birthday.service';
   templateUrl: './main.component.html',
   styleUrl: './main.component.scss'
 })
-export class MainComponent {
+export class MainComponent implements OnInit {
 
     firestore: Firestore = inject(Firestore);
     unsubList;
@@ -30,6 +30,10 @@ export class MainComponent {
 
     constructor(public dialog: MatDialog, private sanitizer: DomSanitizer, private router: Router, private bDayService: BirthdayService) {
         this.unsubList = this.getBirthdayList(); 
+    }
+
+    ngOnInit(): void {
+        this.startUpdateInterval();
     }
 
     ngOnDestroy(){
@@ -143,6 +147,8 @@ export class MainComponent {
     
         return groupedBirthdays;
     }
+
+    
     
     getRemainingTime(birthday: Birthday): string {
         if (birthday.birthdayTotalDays) {
@@ -169,30 +175,38 @@ export class MainComponent {
         return '';
     }
 
+    startUpdateInterval(): void {
+        setInterval(() => {
+          this.birthdayList.forEach((birthday: Birthday) => {
+            this.getRemainingTime(birthday);
+          });
+        }, 1000);
+    }
+
     getRemainingTimeUnit(birthday: Birthday): SafeHtml {
         if (birthday.birthdayTotalDays) {
           let remainingDays = +birthday.birthdayTotalDays;
       
           if (remainingDays > 0) {
-            return 'Tage';
-          } else {
-            let remainingHours = Math.floor(birthday.birthdayTotalHours || 0);
-            let remainingMinutes = Math.floor(birthday.birthdayTotalMinutes || 0);
-            let remainingSeconds = Math.floor(birthday.birthdayTotalSeconds || 0);
+            return remainingDays === 1 ? 'Tag' : 'Tage';
+          }
       
-            if (remainingHours > 0) {
-              return 'Stunden';
-            } else if (remainingMinutes > 0) {
-              return 'Minuten';
-            } else if (remainingSeconds > 0) {
-              return 'Sekunden';
-            } else {
-                return this.sanitizer.bypassSecurityTrustHtml('<img style="width: 20px" src="./assets/icons/party-icon.png">');
-            }
+          let remainingHours = Math.floor(birthday.birthdayTotalHours || 0);
+          let remainingMinutes = Math.floor(birthday.birthdayTotalMinutes || 0);
+          let remainingSeconds = Math.floor(birthday.birthdayTotalSeconds || 0);
+      
+          if (remainingHours > 0) {
+            return remainingHours === 1 ? 'Stunde' : 'Stunden';
+          } else if (remainingMinutes > 0) {
+            return remainingMinutes === 1 ? 'Minute' : 'Minuten';
+          } else if (remainingSeconds > 0) {
+            return remainingSeconds === 1 ? 'Sekunde' : 'Sekunden';
+          } else {
+            return this.sanitizer.bypassSecurityTrustHtml('<img style="width: 20px" src="./assets/icons/party-icon.png">');
           }
         }
         return '';
-    }
+      }
 
     openCountdown(birthday: Birthday): void {
         this.router.navigate(['/countdown'], {
