@@ -8,7 +8,7 @@ import { Birthday } from '../models/birthday.class';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { Router } from '@angular/router';
 import { BirthdayService } from '../birthday.service';
-
+import { interval, Subscription } from 'rxjs';
 @Component({
   selector: 'app-main',
   standalone: true,
@@ -27,17 +27,52 @@ export class MainComponent implements OnInit {
     currentDate: Date = new Date();
     currentYear = new Date().getFullYear();
     groupedBirthdays: { month: string, birthdays: Birthday[] }[] = [];
+    updateInterval!: Subscription;
 
     constructor(public dialog: MatDialog, private sanitizer: DomSanitizer, private router: Router, private bDayService: BirthdayService) {
         this.unsubList = this.getBirthdayList(); 
     }
 
     ngOnInit(): void {
-        this.startUpdateInterval();
+        this.updateInterval = interval(1000).subscribe(() => {
+            this.birthdayList.forEach((birthday: Birthday) => {
+                this.updateRemainingTime(birthday);
+            });
+        });
+    }
+
+    updateRemainingTime(birthday: Birthday): void {
+        let currentDate = new Date();
+        let birthdayDate = new Date(currentDate.getFullYear(), this.month.indexOf(birthday.month), birthday.day);
+        let timeDifference = birthdayDate.getTime() - currentDate.getTime();
+    
+        let remainingDays = Math.floor(timeDifference / (1000 * 3600 * 24));
+        let remainingHours = Math.floor((timeDifference % (1000 * 3600 * 24)) / (1000 * 3600));
+        let remainingMinutes = Math.floor((timeDifference % (1000 * 3600)) / (1000 * 60));
+        let remainingSeconds = Math.floor((timeDifference % (1000 * 60)) / 1000);
+    
+        if (timeDifference <= 0) {
+            remainingDays = 0;
+            remainingHours = 0;
+            remainingMinutes = 0;
+            remainingSeconds = 0;
+        }
+    
+        birthday.birthdayTotalDays = remainingDays.toString();
+        birthday.birthdayTotalHours = remainingHours;
+        birthday.birthdayTotalMinutes = remainingMinutes;
+        birthday.birthdayTotalSeconds = remainingSeconds;
+
+        if (remainingDays === 0 && remainingHours === 0 && remainingMinutes === 0 && remainingSeconds === 0) {
+            birthday.birthdayTotalDays = 'Heute';
+          }
     }
 
     ngOnDestroy(){
         this.unsubList();
+        if (this.updateInterval) {
+            this.updateInterval.unsubscribe();
+        }
     }
 
     addNewBirthday() {
@@ -48,7 +83,7 @@ export class MainComponent implements OnInit {
         return onSnapshot(this.bDayService.getBirthdayRef(), (list) => {
             this.birthdayList = [];
             list.forEach(element => {
-                const birthday = new Birthday().setBirthdayObject(element.data(), element.id);
+                let birthday = new Birthday().setBirthdayObject(element.data(), element.id);
                 this.calculateDays(birthday);
                 this.birthdayList.push(birthday);
             });
@@ -175,13 +210,6 @@ export class MainComponent implements OnInit {
         return '';
     }
 
-    startUpdateInterval(): void {
-        setInterval(() => {
-          this.birthdayList.forEach((birthday: Birthday) => {
-            this.getRemainingTime(birthday);
-          });
-        }, 1000);
-    }
 
     getRemainingTimeUnit(birthday: Birthday): SafeHtml {
         if (birthday.birthdayTotalDays) {
