@@ -1,9 +1,11 @@
-import { Component, inject } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { BirthdayService } from '../birthday.service';
 import { MatSelectModule } from '@angular/material/select';
 import { FormsModule } from '@angular/forms';
 import { Birthday } from '../models/birthday.class';
 import { Firestore, onSnapshot } from '@angular/fire/firestore';
+import { SwPush } from '@angular/service-worker';
+
 
 @Component({
   selector: 'app-reminder',
@@ -12,7 +14,7 @@ import { Firestore, onSnapshot } from '@angular/fire/firestore';
   templateUrl: './reminder.component.html',
   styleUrl: './reminder.component.scss'
 })
-export class ReminderComponent {
+export class ReminderComponent implements OnInit {
     firestore: Firestore = inject(Firestore);
     birthdayList: any = [];
     birthdayDates: any[] = [];
@@ -24,10 +26,17 @@ export class ReminderComponent {
         { label: '1 Tag vorher', isChecked: false }
     ];
 
+    private readonly VAPID_PUBLIC_KEY = 'BBvYT8iE-1YClYpiTLlwCLSCE9AMYsFj3AlAW8ykW8kWmkUSgWKC-yJxLj0zc3oYdJ0kV4_a6nINQ3OTHQS_RXM';
+    private readonly VAPID_PRIVATE_KEY = 'vtVu6OjNg4g0coCKC-sPrV_nmvwQStQ7C0CvwL1jYCw'
+
     month: string[] = ["Januar", "Februar", "März", "April", "Mai", "Juni", "Juli", "August", "September", "Oktober", "November", "Dezember"];
 
-    constructor(public bDayService: BirthdayService) {
+    constructor(public bDayService: BirthdayService, private swPush: SwPush) {
         this.unsubList = this.getBirthdayList(); 
+    }
+
+    ngOnInit(): void {
+        this.requestSubscription();
     }
 
     ngOnDestroy(){
@@ -48,8 +57,6 @@ export class ReminderComponent {
             });
         });
     }
-
-  
 
     getBirthdayDates(reminder: { label: string, isChecked: boolean }): void {
         if (reminder.isChecked) {
@@ -79,4 +86,19 @@ export class ReminderComponent {
             }
         });
     }
+
+    public requestSubscription() {
+        if (!this.swPush.isEnabled) {
+          console.log('Notification not enabled.');
+          return;
+        }
+    
+        this.swPush.requestSubscription({
+            serverPublicKey: this.VAPID_PUBLIC_KEY,
+          })
+          .then((response) => {
+            console.log(JSON.stringify(response));
+          })
+          .catch((error) => console.log(error));
+      }
 }
