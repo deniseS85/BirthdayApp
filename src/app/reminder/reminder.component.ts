@@ -26,8 +26,7 @@ export class ReminderComponent implements OnInit {
         { label: '1 Tag vorher', isChecked: false }
     ];
 
-    private readonly VAPID_PUBLIC_KEY = 'BBvYT8iE-1YClYpiTLlwCLSCE9AMYsFj3AlAW8ykW8kWmkUSgWKC-yJxLj0zc3oYdJ0kV4_a6nINQ3OTHQS_RXM';
-    private readonly VAPID_PRIVATE_KEY = 'vtVu6OjNg4g0coCKC-sPrV_nmvwQStQ7C0CvwL1jYCw'
+    private readonly VAPID_PUBLIC_KEY = 'BMY-zIhG5oXDNYHetg_TBZ_AJ6Pnxfi8gLphglG6Iyo_bWAERH-UW_r-X1B_dzVFxl061S6MgslNXXVdLklPczo';
 
     month: string[] = ["Januar", "Februar", "März", "April", "Mai", "Juni", "Juli", "August", "September", "Oktober", "November", "Dezember"];
 
@@ -92,13 +91,41 @@ export class ReminderComponent implements OnInit {
           console.log('Notification not enabled.');
           return;
         }
-    
+      
         this.swPush.requestSubscription({
-            serverPublicKey: this.VAPID_PUBLIC_KEY,
-          })
-          .then((response) => {
-            console.log(JSON.stringify(response));
+          serverPublicKey: this.VAPID_PUBLIC_KEY,
+        })
+          .then((subscription) => {
+            console.log('Subscription successful:', subscription);
+            const message = `Vielen Dank fürs Abonnieren! Sie erhalten jetzt Benachrichtigungen.`;
+            this.sendNotification(message);
           })
           .catch((error) => console.log(error));
       }
-}
+      
+      private sendNotification(message: string): void {
+        if (!('Notification' in window)) {
+          console.log('This browser does not support desktop notification');
+          return;
+        }
+    
+        if (Notification.permission === 'granted') {
+          this.displayNotification(message);
+        } else if (Notification.permission !== 'denied') {
+          Notification.requestPermission().then(permission => {
+            if (permission === 'granted') {
+              this.displayNotification(message);
+            }
+          });
+        }
+      }
+    
+      private displayNotification(message: string): void {
+        const options: NotificationOptions = {
+          body: message,
+          icon: '/assets/icons/party.icon.png'
+        };
+    
+        new Notification('Neue Benachrichtigung', options);
+      }
+    }

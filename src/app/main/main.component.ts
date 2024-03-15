@@ -20,62 +20,23 @@ import { interval, Subscription } from 'rxjs';
 export class MainComponent implements OnInit {
 
     firestore: Firestore = inject(Firestore);
-    unsubList;
+    unsubList!:any;
     birthdayList: any = [];
     isBirthday: boolean = false;
     weekday: any = ["So","Mo","Di","Mi","Do","Fr","Sa"];
     month: any = ["Januar", "Februar", "März", "April", "Mai", "Juni", "Juli", "August", "September", "Oktober", "November", "Dezember"];
-    currentDate: Date = new Date();
-    currentYear = new Date().getFullYear();
     groupedBirthdays: { month: string, birthdays: Birthday[] }[] = [];
     updateInterval!: Subscription;
 
-    constructor(public dialog: MatDialog, private sanitizer: DomSanitizer, private router: Router, private bDayService: BirthdayService) {
-        this.unsubList = this.getBirthdayList(); 
-    }
+    constructor(public dialog: MatDialog, private sanitizer: DomSanitizer, private router: Router, private bDayService: BirthdayService) {}
 
     ngOnInit(): void {
         this.updateInterval = interval(1000).subscribe(() => {
-            this.getBirthdayList();
+            this.unsubList = this.getBirthdayList();
         });
     }
 
-   /*  updateRemainingTime(birthday: Birthday): void {
-        let currentDate = new Date();
-        let birthdayDate = new Date(this.currentYear, this.month.indexOf(birthday.month), birthday.day);
-        let timeDifference = birthdayDate.getTime() - currentDate.getTime();
-        let remainingDays = Math.floor(timeDifference / (1000 * 3600 * 24));
-        let remainingHours = Math.floor((timeDifference % (1000 * 3600 * 24)) / (1000 * 3600));
-        let remainingMinutes = Math.floor((timeDifference % (1000 * 3600)) / (1000 * 60));
-        let remainingSeconds = Math.floor((timeDifference % (1000 * 60)) / 1000);
-       
-        
-        if (timeDifference <= 0) {
-            let nextYear = this.currentYear + 1;
-            birthdayDate = new Date(nextYear, this.month.indexOf(birthday.month), birthday.day);
-            timeDifference = birthdayDate.getTime() - currentDate.getTime();
-            remainingDays = Math.floor(timeDifference / (1000 * 3600 * 24));
-            remainingHours = Math.floor((timeDifference % (1000 * 3600 * 24)) / (1000 * 3600));
-            remainingMinutes = Math.floor((timeDifference % (1000 * 3600)) / (1000 * 60));
-            remainingSeconds = Math.floor((timeDifference % (1000 * 60)) / 1000);
-        }
 
-        if (remainingDays === 0 && remainingHours === 0 && remainingMinutes === 0 && remainingSeconds === 0) {
-            birthday.birthdayTotalDays = 'Heute';
-        } else if (remainingDays === 365) {
-            birthday.birthdayTotalDays = 'Heute';
-        } else {
-            if (remainingDays >= 1) {
-                remainingDays++;
-            }
-            birthday.birthdayTotalDays = remainingDays.toString();
-        }
-    
-        birthday.birthdayTotalHours = remainingHours;
-        birthday.birthdayTotalMinutes = remainingMinutes;
-        birthday.birthdayTotalSeconds = remainingSeconds;
-    } */
-    
     ngOnDestroy(){
         this.unsubList();
         if (this.updateInterval) {
@@ -98,26 +59,21 @@ export class MainComponent implements OnInit {
             this.sortBirthdayList();
             this.groupedBirthdays = this.groupBirthdaysByMonthAndYear(this.birthdayList);
             this.isBirthday = this.birthdayList.length > 0;
-
-            this.birthdayList.forEach((birthday: Birthday) => {
-                birthday.reminderTime = this.getRemainingTime(birthday);
-            });
         }); 
         
     }
 
     calculateDays(birthday: Birthday): void {
         let monthIndex = this.month.indexOf(birthday.month);
-        let birthdayOfPerson = new Date(this.currentYear, monthIndex, birthday.day);
-        let dayDifference = birthdayOfPerson.getTime() - this.currentDate.getTime(); 
+        let birthdayOfPerson = new Date(new Date().getFullYear(), monthIndex, birthday.day);
+        let dayDifference = birthdayOfPerson.getTime() - new Date().getTime(); 
         let days = dayDifference / (1000 * 3600 * 24);
         let hours = dayDifference / (1000 * 3600);
         let minutes = dayDifference / (1000 * 60);
         let seconds = dayDifference / 1000;
         let birthdayTotalDays = Math.ceil(days);
-
         if (Math.floor(days) < 0) {
-            this.isBirthdayAlreadyPassed(birthday, this.currentYear, monthIndex);
+            this.isBirthdayAlreadyPassed(birthday, new Date().getFullYear(), monthIndex);
         } else if (Math.floor(days) === 0) {
             this.isBirthdayToday(birthday, days, birthdayOfPerson);
         } else {
@@ -128,7 +84,7 @@ export class MainComponent implements OnInit {
 
     isBirthdayAlreadyPassed(birthday: Birthday, currentYear: number, monthIndex: number): void {
         let nextBirthdayOfPerson = new Date(currentYear + 1, monthIndex, birthday.day);
-        let nextDayDifference = Math.abs(nextBirthdayOfPerson.getTime() - this.currentDate.getTime());
+        let nextDayDifference = Math.abs(nextBirthdayOfPerson.getTime() - new Date().getTime());
         let remainingDays = Math.ceil(nextDayDifference / (1000 * 3600 * 24));
       
         birthday.birthdayTotalDays = remainingDays === 365 ? '0' : remainingDays.toString();
@@ -185,19 +141,15 @@ export class MainComponent implements OnInit {
                 currentGroup.month = birthday.month;
                 currentGroup.birthdays = [];
             }
-    
             currentGroup.birthdays.push(birthday);
         });
     
         if (currentGroup.birthdays.length > 0) {
             groupedBirthdays.push({ ...currentGroup });
         }
-    
         return groupedBirthdays;
     }
 
-    
-    
     getRemainingTime(birthday: Birthday): string {
         if (birthday.birthdayTotalDays) {
             let remainingDays = +birthday.birthdayTotalDays;
@@ -223,13 +175,12 @@ export class MainComponent implements OnInit {
         return '';
     }
 
-
     getRemainingTimeUnit(birthday: Birthday): SafeHtml {
         if (birthday.birthdayTotalDays) {
           let remainingDays = +birthday.birthdayTotalDays;
       
           if (remainingDays > 0) {
-            return remainingDays === 1 ? 'Tag' : 'Tage';
+            return remainingDays === 1 ? 'Tag' : 'Tage ';
           }
       
           let remainingHours = Math.floor(birthday.birthdayTotalHours || 0);

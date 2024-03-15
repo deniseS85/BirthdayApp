@@ -9,7 +9,6 @@ export class Birthday {
     birthdayTotalMinutes?: number; 
     birthdayTotalSeconds?: number;
     weekday?: string;
-    reminderTime?: string;
 
 
     constructor(obj?: any) {
