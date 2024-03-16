@@ -20,13 +20,15 @@ const firebaseConfig = {
 export const appConfig: ApplicationConfig = {
   providers: [
     provideRouter(routes), provideAnimationsAsync(),
-    importProvidersFrom([
+    importProvidersFrom(
+      [
         provideFirebaseApp(() => initializeApp(firebaseConfig)),
         provideFirestore(() => getFirestore()),
-    ]), provideAnimationsAsync(), provideAnimationsAsync(),
-    provideServiceWorker('ngsw-worker.js', {
+      ]), 
+      provideAnimationsAsync(),
+      provideServiceWorker('ngsw-worker.js', {
         enabled: !isDevMode(),
         registrationStrategy: 'registerWhenStable:30000'
-    })
+      })
 ]
 };
