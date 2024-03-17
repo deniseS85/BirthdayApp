@@ -7,7 +7,7 @@
     <div class="date">
         <mat-label>Benachrichtigungszeit einstellen</mat-label>
         <label for="time"></label>
-        <select [(ngModel)]="selectedTime" name="time" id="time">
+        <select [(ngModel)]="selectedTime" name="time" id="time" (change)="setSelectedTime(selectedTime)">
             <option class="firstselect" value="">-- --</option>
             @for (hour of hours; track hour) {
                 <option [ngValue]="hour + ':00'">{{ hour }}:00</option>
@@ -18,7 +18,7 @@
     @for(reminder of reminders; track reminder; let i = $index) {
         <div class="checkbox-container">{{ reminder.label }}
             <label class="checkbox">
-                <input type="checkbox" [(ngModel)]="reminders[i].isChecked" (ngModelChange)="getBirthdayDates(reminders[i])">
+                <input type="checkbox" [(ngModel)]="reminders[i].isChecked" (ngModelChange)="setReminderDate(reminders[i])">
                 <div class="slider"></div>
             </label>
         </div>

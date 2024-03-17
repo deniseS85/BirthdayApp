@@ -28,15 +28,11 @@ export class MainComponent implements OnInit {
     groupedBirthdays: { month: string, birthdays: Birthday[] }[] = [];
     updateInterval!: Subscription;
 
-    constructor(public dialog: MatDialog, private sanitizer: DomSanitizer, private router: Router, private bDayService: BirthdayService) {
-        this.unsubList = this.getBirthdayList();
-    }
+    constructor(public dialog: MatDialog, private sanitizer: DomSanitizer, private router: Router, private bDayService: BirthdayService) { }
 
     ngOnInit(): void {
         this.updateInterval = interval(1000).subscribe(() => {
-            this.birthdayList.forEach((birthday: Birthday) => {
-                this.calculateDays(birthday)
-            });
+            this.unsubList = this.getBirthdayList();
         });
     }
 

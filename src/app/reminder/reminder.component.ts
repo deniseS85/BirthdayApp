@@ -5,6 +5,7 @@ import { FormsModule } from '@angular/forms';
 import { Birthday } from '../models/birthday.class';
 import { Firestore, onSnapshot } from '@angular/fire/firestore';
 import { SwPush } from '@angular/service-worker';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-reminder',
@@ -29,7 +30,7 @@ export class ReminderComponent implements OnInit {
 
     month: string[] = ["Januar", "Februar", "März", "April", "Mai", "Juni", "Juli", "August", "September", "Oktober", "November", "Dezember"];
 
-    constructor(public bDayService: BirthdayService, private swPush: SwPush) {
+    constructor(public bDayService: BirthdayService, private swPush: SwPush, private http: HttpClient) {
         this.unsubList = this.getBirthdayList(); 
     }
 
@@ -37,10 +38,17 @@ export class ReminderComponent implements OnInit {
        this.swPush.messages.subscribe((message: any) => {
           console.log(message);
        })
+       this.requestSubscription();
+       this. loadReminderDatesFromLocalStorage();
     } 
 
     ngOnDestroy(){
         this.unsubList();
+    }
+
+    loadReminderDatesFromLocalStorage(): void {
+        this.selectedTime = localStorage.getItem('selectedTime') || this.selectedTime;
+        this.reminders = JSON.parse(localStorage.getItem('reminders') || '[]');
     }
 
     getBirthdayList() {
@@ -60,14 +68,25 @@ export class ReminderComponent implements OnInit {
         });
     }
 
-    getBirthdayDates(reminder: { label: string, isChecked: boolean }): void {
+    setReminderDate(reminder: { label: string, isChecked: boolean }): void {
+        this.saveSettings();
         if (reminder.isChecked) {
+            this.saveSettings();
             this.checkNotifications(reminder.label, this.selectedTime); 
             this.requestSubscription();
         } 
     }
 
-  
+    setSelectedTime(time: string): void {
+        this.selectedTime = time;
+        this.saveSettings(); 
+    }
+
+    saveSettings(): void {
+        localStorage.setItem('selectedTime', this.selectedTime);
+        localStorage.setItem('reminders', JSON.stringify(this.reminders));
+    }
+    
 
     checkNotifications(reminderDate: string, selectTime: string): void {
         let today = new Date();
@@ -78,7 +97,6 @@ export class ReminderComponent implements OnInit {
         let selectedMinute = parseInt(selectTime.split(':')[1], 10);
         let selectedDateTime = new Date(currentYear, currentMonth, currentDay, selectedHour, selectedMinute);
         
-        // Check if selected time is in the future
         if (selectedDateTime > today) {
             this.isSelectedTimeInFuture(reminderDate, currentYear, currentMonth, currentDay);
         } else {
@@ -99,7 +117,7 @@ export class ReminderComponent implements OnInit {
         });
     
         if (reminderDate === '1 Tag vorher') {
-            const nextDay = new Date(currentYear, currentMonth, currentDay + 1);
+            let nextDay = new Date(currentYear, currentMonth, currentDay + 1);
             this.checkTomorrowBirthday(nextDay);
         }
     }
@@ -126,10 +144,6 @@ export class ReminderComponent implements OnInit {
         });
     }
   
-  
-  
-  
-
     public requestSubscription() {
         if (!this.swPush.isEnabled) {
           console.log('Notification not enabled.');
@@ -173,27 +187,3 @@ export class ReminderComponent implements OnInit {
         new Notification('Neue Benachrichtigung', options);
     }
 }
-
-
- /*  checkNotifications(reminderDate: string, selectTime: string): void {
-        let timeParts = selectTime.split(':');
-        let hours = parseInt(timeParts[0], 10);
-        let minutes = parseInt(timeParts[1], 10);
-    
-        this.birthdayDates.forEach((birthday: any) => {
-            let currentYear = new Date().getFullYear();
-            let monthIndex = this.month.indexOf(birthday.month);
-            let birthdayDate = new Date(currentYear, monthIndex, parseInt(birthday.day), hours, minutes);
-            
-            if (reminderDate === 'Am Geburtstag') {
-                if (birthdayDate < new Date()) {
-                    birthdayDate.setFullYear(currentYear + 1);
-                }
-                console.log(`Benachrichtigung Am Geburtstag:`, birthdayDate);
-            } else if (reminderDate === '1 Tag vorher') {
-                let oneDayBefore = new Date(birthdayDate.getTime());
-                oneDayBefore.setDate(oneDayBefore.getDate() - 1);
-                console.log(`Benachrichtigung 1 Tag davor:`, oneDayBefore);
-            }
-        });
-    } */
